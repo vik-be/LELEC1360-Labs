@@ -1,35 +1,32 @@
-import matplotlib.pyplot as plt
-from scipy.fft import fft
-from scipy.fft import fft, fftfreq
 import numpy as np
-
-
-
+import matplotlib.pyplot as plt
+from scipy.fft import fft, fftfreq
 
 
 def plot_signals(t, signals: dict, title: str, save_path: str = None):
-    """signals = {"Signal modulant": m, "Porteuse": c, ...}"""
     plt.figure(figsize=(6, 4))
     for label, sig in signals.items():
         plt.plot(t, sig, label=label)
-    plt.legend(); plt.grid(); plt.title(title)
-    plt.xlabel("Temps (s)"); plt.ylabel("Amplitude")
+    plt.legend()
+    plt.grid()
+    plt.title(title)
+    plt.xlabel("Temps (s)")
+    plt.ylabel("Amplitude")
     if save_path:
         plt.savefig(save_path)
     plt.show()
 
-def plot_spectrum(t, signal, title="Spectre", save_path=None):
 
+def plot_spectrum(t, sig, title="Spectre", zoom_factor=8, save_path=None):
 
-
-    N = len(signal)
+    N = len(sig)
     dt = t[1] - t[0]
     freqs = fftfreq(N, dt)
-    spectrum = np.abs(fft(signal)) / N
+    spectrum = np.abs(fft(sig)) / N
 
     plt.figure(figsize=(6, 4))
     plt.plot(freqs, spectrum)
-    plt.xlim(-max(freqs)/8, max(freqs)/8) 
+    plt.xlim(-max(freqs) / zoom_factor, max(freqs) / zoom_factor)
     plt.xlabel("Fréquence (Hz)")
     plt.ylabel("|X(f)|")
     plt.title(title)
@@ -40,10 +37,16 @@ def plot_spectrum(t, signal, title="Spectre", save_path=None):
 
 
 def XY_plot(s1, s2, title="XY Plot", save_path=None):
+
+    if len(s1) != len(s2):
+        raise ValueError(
+            f"XY_plot: s1 and s2 must have the same length "
+            f"(got {len(s1)} and {len(s2)})."
+        )
     plt.figure()
     plt.plot(s1, s2)
     plt.xlabel("Modulant")
-    plt.ylabel("Démodulé")
+    plt.ylabel("Démodulé / Modulé")
     plt.title(title)
     plt.grid()
     if save_path:
