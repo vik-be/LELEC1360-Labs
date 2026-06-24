@@ -3,7 +3,18 @@ import matplotlib.pyplot as plt
 from scipy.fft import fft, fftfreq
 
 
-def plot_signals(t, signals: dict, title: str, save_path: str = None):
+def plot_signals(t, signals: dict, title: str, save_path: str = None, t_max: float = None):
+    """Trace les signaux temporels.
+
+    t_max permet d'afficher uniquement une fenêtre [0, t_max] sans devoir
+    régénérer un signal plus court : on garde un seul signal (assez long pour
+    une FFT précise) et on ne fenêtre que l'affichage.
+    """
+    if t_max is not None:
+        mask = t <= t_max
+        t = t[mask]
+        signals = {label: sig[mask] for label, sig in signals.items()}
+
     plt.figure(figsize=(6, 4))
     for label, sig in signals.items():
         plt.plot(t, sig, label=label)
